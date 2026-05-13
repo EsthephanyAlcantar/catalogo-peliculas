@@ -13,12 +13,14 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install
+RUN composer install --no-dev --optimize-autoloader
 
 RUN a2enmod rewrite
 
-RUN chown -R www-data:www-data /var/www/html/storage
-RUN chmod -R 775 /var/www/html/storage
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 COPY .env.example .env
 
